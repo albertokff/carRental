@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Marca;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreMarcaRequest;
+use App\Http\Requests\UpdateMarcaRequest;
 
 class MarcaController extends Controller
 {
@@ -12,7 +13,7 @@ class MarcaController extends Controller
      */
     public function index()
     {
-        //
+        return Marca::all();
     }
 
     /**
@@ -26,9 +27,9 @@ class MarcaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreMarcaRequest $request)
     {
-        //
+        Marca::create($request->all());
     }
 
     /**
@@ -36,7 +37,7 @@ class MarcaController extends Controller
      */
     public function show(Marca $marca)
     {
-        //
+        return $marca;
     }
 
     /**
@@ -50,7 +51,7 @@ class MarcaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Marca $marca)
+    public function update(UpdateMarcaRequest $request, Marca $marca)
     {
         //
     }
