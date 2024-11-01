@@ -53,7 +53,12 @@ class MarcaController extends Controller
      */
     public function update(UpdateMarcaRequest $request, Marca $marca)
     {
-        //
+        // print_r($request->all());
+        // echo '<br>';
+        // print_r($marca->getAttributes());
+
+        $marca->update($request->all());
+        return $marca;
     }
 
     /**
@@ -61,6 +66,7 @@ class MarcaController extends Controller
      */
     public function destroy(Marca $marca)
     {
-        //
+        $marca->delete();
+        return ['msg' => 'Marca deletada com sucesso!'];
     }
 }

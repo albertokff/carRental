@@ -5,6 +5,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CarroController;
 use App\Http\Controllers\LocacaoController;
 use App\Http\Controllers\ModeloController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
