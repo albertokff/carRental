@@ -8,12 +8,18 @@ use App\Http\Requests\UpdateMarcaRequest;
 
 class MarcaController extends Controller
 {
+    protected $marca;
+    public function __construct(Marca $marca)
+    {
+        $this->marca = $marca;
+    }
+    
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Marca::all();
+        return $this->marca->all();
     }
 
     /**
@@ -29,15 +35,24 @@ class MarcaController extends Controller
      */
     public function store(StoreMarcaRequest $request)
     {
-        Marca::create($request->all());
+        $request->validate($this->marca->rules(), $this->marca->feedback());
+
+        $marca = $this->marca->create($request->all());
+        return response()->json($marca, 201);
     }
 
     /**
      * Display the specified resource.
-     */
-    public function show(Marca $marca)
+     */ 
+    public function show($id)
     {
-        return $marca;
+        $marca = $this->marca->find($id);
+
+        if ($marca === null) {
+            return response()->json(['erro' => 'Recurso pesquisado não existe'], 404);
+        }
+
+        return $this->marca->find($id);
     }
 
     /**
@@ -51,21 +66,39 @@ class MarcaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMarcaRequest $request, Marca $marca)
+    public function update(UpdateMarcaRequest $request, $id)
     {
         // print_r($request->all());
         // echo '<br>';
         // print_r($marca->getAttributes());
 
+        // $marca->update($request->all());
+        // return $marca;
+        $marca = $this->marca->find($id);
+
+        if ($marca === null) {
+            return response()->json(['erro' => 'Impossível realizar a atualização. Recurso pesquisado não existe'], 404);
+        }
+
+        $request->validate($marca->rules(), $marca->feedback());
+
         $marca->update($request->all());
-        return $marca;
+        return response()->json($marca, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Marca $marca)
+    public function destroy($id)
     {
+        // $marca->delete();
+        // return ['msg' => 'Marca deletada com sucesso!'];
+        $marca = $this->marca->find($id);
+
+        if ($marca === null) {
+            return response()->json(['erro' => 'Impossível realizar a exclusão. Recurso pesquisado não existe'], 404);
+        }
+
         $marca->delete();
         return ['msg' => 'Marca deletada com sucesso!'];
     }

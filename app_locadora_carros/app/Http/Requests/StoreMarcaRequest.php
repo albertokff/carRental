@@ -14,8 +14,9 @@ class StoreMarcaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome' => 'required|string|max:255',
+            'nome' => 'required|string|max:255|min:3',
             // Adicione outras regras conforme necessário
+            // esse é um comentário de testes!
         ];
     }
 }
