@@ -105,9 +105,17 @@ class MarcaController extends Controller
             return ['msg' => 'Requisição PATCH efetuada', 'teste' => $teste];
         } else {
             $request->validate($marca->rules(), $marca->feedback());
-            $marca->update($request->all());
-            return response()->json($marca, 200);
         }
+
+        $image = $request->file('imagem');
+        $image_urn = $image->store('imagens', 'public');    
+
+        $marca->update([
+            'nome' => $request->nome,
+            'imagem' => $image_urn
+        ]);
+        
+        return response()->json($marca, 200);
     }
 
     /**
