@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Marca;
 use App\Http\Requests\StoreMarcaRequest;
 use App\Http\Requests\UpdateMarcaRequest;
+use Illuminate\Support\Facades\Storage;
 
 class MarcaController extends Controller
 {
@@ -107,6 +108,11 @@ class MarcaController extends Controller
             $request->validate($marca->rules(), $marca->feedback());
         }
 
+        //Remove o arquivo antigo caso um novo arquivo tenha sido enviado
+        if ($request->file('imagem')) {
+            Storage::disk('public')->delete($marca->imagem);
+        }
+
         $image = $request->file('imagem');
         $image_urn = $image->store('imagens', 'public');    
 
@@ -130,6 +136,9 @@ class MarcaController extends Controller
         if ($marca === null) {
             return response()->json(['erro' => 'Impossível realizar a exclusão. Recurso pesquisado não existe'], 404);
         }
+
+        //Remove o arquivo antigo caso um novo arquivo tenha sido enviado
+        Storage::disk('public')->delete($marca->imagem);
 
         $marca->delete();
         return ['msg' => 'Marca deletada com sucesso!'];
