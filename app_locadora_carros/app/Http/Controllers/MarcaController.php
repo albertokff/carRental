@@ -87,14 +87,13 @@ class MarcaController extends Controller
             return response()->json(['erro' => 'Impossível realizar a atualização. Recurso pesquisado não existe'], 404);
         }
 
-        $teste = '';
+        $dados = '';
 
         if ($request->method() == 'PATCH') {
 
             //Percorrendo todas as regras definidas no model
             foreach ($marca->rules() as $input => $regra) {
-                $teste .= 'input: ' . $input . '| Regra: ' . $regra . '<br>';
-
+                
                 //Coletar apenas as regras aplicáveis aos parâmetros parciais da requisição PATCH
                 if (array_key_exists($input, $request->all())) {
                     $regrasDinamicas[$input] = $regra;
@@ -102,8 +101,6 @@ class MarcaController extends Controller
             }
 
             $request->validate($regrasDinamicas, $marca->feedback());
-
-            return ['msg' => 'Requisição PATCH efetuada', 'teste' => $teste];
         } else {
             $request->validate($marca->rules(), $marca->feedback());
         }
@@ -114,12 +111,22 @@ class MarcaController extends Controller
         }
 
         $image = $request->file('imagem');
-        $image_urn = $image->store('imagens', 'public');    
+        $image_urn = $image->store('imagens', 'public');   
 
+        //preencher o objeto $marca com os dados do request
+        //então, por exemplo o nome é obrigatório, mas se o request não foi passado o nome, só a imagem, aí fazendo esse fill a gente faz um merge do request com o que tá no banco
+        $marca->fill($request->all());
+        $marca->imagem = $image_urn;
+
+        //$marca->getAttributes() esse comando vai recuperar os atributos do objeto
+
+        $marca->save();
+        /*
         $marca->update([
             'nome' => $request->nome,
             'imagem' => $image_urn
         ]);
+        */
         
         return response()->json($marca, 200);
     }

@@ -91,11 +91,11 @@ class ModeloController extends Controller
         $teste = '';
 
         if ($request->method() == 'PATCH') {
+            $regrasDinamicas = [];
 
             //Percorrendo todas as regras definidas no model
             foreach ($modelo->rules() as $input => $regra) {
-                $teste .= 'input: ' . $input . '| Regra: ' . $regra . '<br>';
-
+                
                 //Coletar apenas as regras aplicáveis aos parâmetros parciais da requisição PATCH
                 if (array_key_exists($input, $request->all())) {
                     $regrasDinamicas[$input] = $regra;
@@ -103,8 +103,6 @@ class ModeloController extends Controller
             }
 
             $request->validate($regrasDinamicas);
-
-            return ['msg' => 'Requisição PATCH efetuada', 'teste' => $teste];
         } else {
             $request->validate($modelo->rules());
         }
@@ -117,6 +115,10 @@ class ModeloController extends Controller
         $image = $request->file('imagem');
         $image_urn = $image->store('imagens/modelos', 'public');    
 
+        $modelo->fill($request->all());
+        $modelo->imagem = $image_urn;
+        $modelo->save();
+        /*
         $modelo->update([
             'marca_id' => $request->marca_id,
             'nome' => $request->nome,
@@ -126,6 +128,7 @@ class ModeloController extends Controller
             'air_bag' => $request->air_bag,
             'abs' => $request->abs
         ]);
+        */
         
         return response()->json($modelo, 200);
     }
