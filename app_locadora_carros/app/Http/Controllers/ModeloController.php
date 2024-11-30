@@ -17,13 +17,22 @@ class ModeloController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $modelos = [];
+
+        if ($request->has('atributos')) {
+            $atributos = $request->atributos;
+            $modelos = $this->modelo->selectRaw($atributos)->with('marca')->get();
+        } else {
+            $modelos = $this->modelo->with('marca')->get();
+        }
+
         //returnresponse()->json($this->modelo->all(), 200);
         // a instrução acima impossibilita de modificar a consulta, adicionando os relacionamentos, pois cria um objeto de consulta e em seguida faz um get()
 
         // o comando abaixo com o get possibilita montar uma query e só depois montar o objeto de consulta
-        return response()->json($this->modelo->with('marca')->get(), 200); 
+        return response()->json($modelos, 200); 
     }
 
     /**
